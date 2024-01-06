@@ -2,6 +2,7 @@
 
 import os
 import stat
+import string
 from getpass import getpass
 from cryptography.fernet import Fernet
 
@@ -11,28 +12,52 @@ def check_password(password1, password2):
     # Initiat count for attempts (max 3)
     count = 0
 
+    puncts = any(i in password1 for i in string.punctuation)
+    letters = any(i in password1 for i in string.ascii_letters)
+    digits = any(i in password1 for i in string.digits)
+
     # Verify password meets standards
     # Password must be greater than 10 characters
+    # Password must contain [0-9, A-Z, a-z, !@#$%^&*()-_=+]
     while (
         password1 != password2 or
-        len(password1) < 10
+        len(password1) < 10 or
+        not puncts or not letters or not digits
+
     ):
+        puncts = any(i in password1 for i in string.punctuation)
+        letters = any(i in password1 for i in string.ascii_letters)
+        digits = any(i in password1 for i in string.digits)
+        
         while (password1 != password2):
             print('\nPasswords do not match.')
             password1 = getpass('Password: ')
             password2 = getpass('Confirm password: ')
             count += 1
             if (count > 2):
-                print('\nPasswords do not match.')
+                print('\nPassword key and token creation failed.')
                 exit()
+            break
+
         while (len(password1) < 10):
             print('\nPassowrd must be 10 characters or more.')
             password1 = getpass('Password: ')
             password2 = getpass('Confirm password: ')
             count += 1
             if (count > 2):
-                print('\nPassowrd must be 10 characters or more.')
+                print('\nPassword key and token creation failed.')
                 exit()
+            break
+
+        while (not puncts or not letters or not digits):
+            print('\nPassowrd must 1 or more special characters.')
+            password1 = getpass('Password: ')
+            password2 = getpass('Confirm password: ')
+            count += 1
+            if (count > 2):
+                print('\nPassword key and token creation failed.')
+                exit()
+            break
 
     return password1
 
@@ -72,7 +97,7 @@ def gen_key_token(password1):
     # uncoded_password = cipher.decrypt(token).decode('utf-8')
 
 
-def gen_secrets():
+def gen_keys():
     print('Please enter a passowrd, must be 10 characters or more.')
     password1 = getpass('Password: ')
     password2 = getpass('Confirm password: ')
@@ -82,4 +107,4 @@ def gen_secrets():
 
 
 if __name__ == '__main__':
-    gen_secrets()
+    gen_keys()
