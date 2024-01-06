@@ -13,7 +13,10 @@ def check_password(password1, password2):
 
     # Verify password meets standards
     # Password must be greater than 10 characters
-    while (password1 != password2 or len(password1) < 10):
+    while (
+        password1 != password2 or
+        len(password1) < 10
+    ):
         while (password1 != password2):
             print('\nPasswords do not match.')
             password1 = getpass('Password: ')
@@ -37,8 +40,9 @@ def check_password(password1, password2):
 def gen_key_token(password1):
 
     # Define file name directory to store key and token
-    SECRETS_FN = 'secrets'
     SECRETS_DIR = os.path.join(os.path.expanduser('~'), '.secrets/')
+    SECRET_KEY = 'secret.key'
+    TOKEN = 'token.pub'
 
     # generate secret key and token
     key = Fernet.generate_key().decode('utf-8')
@@ -52,12 +56,18 @@ def gen_key_token(password1):
     os.chmod(SECRETS_DIR, stat.S_IRWXU)
 
     # Write key and token to secrets file
-    secrets_file = os.path.join(SECRETS_DIR, SECRETS_FN)
-    with open(secrets_file, 'w') as f:
+    secrets_key_fn = os.path.join(SECRETS_DIR, SECRET_KEY)
+    with open(secrets_key_fn, 'w') as f:
         f.write(f'key={key}\n')
-        f.write(f'token={token}\n')
-    os.chmod(secrets_file, stat.S_IRUSR | stat.S_IWUSR)
+    os.chmod(secrets_key_fn, stat.S_IRUSR | stat.S_IWUSR)
 
+    token_fn = os.path.join(SECRETS_DIR, TOKEN)
+    with open(token_fn, 'w') as f:
+        f.write(f'token={token}')
+    os.chmod(
+        token_fn, 
+        stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH
+    )
     # cipher = Fernet(key)
     # uncoded_password = cipher.decrypt(token).decode('utf-8')
 
