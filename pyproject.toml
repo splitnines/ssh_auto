@@ -1,0 +1,24 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+[project]
+name = "ssh_auto"
+version = "0.0.3"
+authors = [
+  { name="Rickey", email="splitnines@gmail.com" },
+]
+description = "A small ssh automation package"
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[project.urls]
+Homepage = "https://github.com/splitnines/ssh_auto"
+Issues = "https://github.com/splitnines/ssh_auto/issues"
